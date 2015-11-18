@@ -26,3 +26,10 @@
 *.exe
 *.out
 *.app
+
+# Result files
+simulations/results/
+simulations/results/*
+*.sca
+*.rt
+*.anf
