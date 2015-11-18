@@ -11,7 +11,7 @@ import inet.world.radio.ChannelControl;
 import lte.corenetwork.binder.LteBinder;
 import lte.corenetwork.nodes.Ue;
 import lte.corenetwork.nodes.eNodeB;
-import omnethybridue.simulations.RcjnUe;
+import omnethybridue.simulations.*;
 
 network Tests
 {
@@ -41,7 +41,7 @@ network Tests
         eNodeB: eNodeB {
             @display("p=391,259;is=vl");
         }
-        ue[numUe]: RcjnUe {
+        ue[numUe]: simpleHibridUe {
             @display("p=783,278");
         }
     connections:

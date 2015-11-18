@@ -1,3 +1,18 @@
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+// 
+// You should have received a copy of the GNU Lesser General Public License
+// along with this program.  If not, see http://www.gnu.org/licenses/.
+// 
+
 package omnethybridue.simulations;
 
 import inet.applications.ITCPApp;
@@ -20,7 +35,7 @@ import inet.util.PcapRecorder;
 import lte.stack.phy.LteNicUe;
 
 
-module RcjnUe
+module simpleHibridUe
 {
     parameters:
         @node();
@@ -86,13 +101,9 @@ module RcjnUe
         }
 
         // network layer
-        networkLayerWIFI: NetworkLayer {
+        networkLayer: NetworkLayer {
             parameters:
-                @display("p=447,353;q=queue");
-        }
-
-        networkLayerLTE: NetworkLayer {
-            @display("p=188,353");
+                @display("p=322,237;q=queue");
         }
 
         // linklayer
@@ -106,31 +117,31 @@ module RcjnUe
         }
 
         lo0: LoopbackInterface {
-            @display("p=467,437");
+            @display("p=159,302");
         }
 
         wlan[numRadios]: <default("Ieee80211Nic")> like IWirelessNic {
             parameters:
-                @display("p=337,466,row,60;q=queue");
+                @display("p=220,341,row,60;q=queue");
         }
 
         eth[sizeof(ethg)]: <default("EthernetInterface")> like IWiredNic {
             parameters:
-                @display("p=533,466,row,60;q=txQueue");
+                @display("p=361,369,row,60;q=txQueue");
         }
 
         ppp[sizeof(pppg)]: <default("PPPInterface")> like IWiredNic {
             parameters:
-                @display("p=428,505,row,60;q=txQueue");
+                @display("p=283,408,row,60;q=txQueue");
         }
 
         ext[numExtInterfaces]: <default("ExtInterface")> like IExternalNic {
             parameters:
-                @display("p=607,392,row,10;q=txQueue;i=block/ifcard");
+                @display("p=527,318,row,10;q=txQueue;i=block/ifcard");
         }
 
         manetrouting: <routingProtocol> like IManetRouting if routingProtocol != "" {
-            @display("p=592,318");
+            @display("p=467,237");
         }
 
         tcpApp[numTcpApps]: <> like ITCPApp {
@@ -149,14 +160,10 @@ module RcjnUe
             @display("p=447,119");
         }
 
-        tecDecision: TecDecision {
-            @display("p=311,235");
-        }
-
         // NOTE: instance must be named "nic"
         nic: LteNicUe {
             nodeType = nodeType;
-            @display("p=188,466");
+            @display("p=447,392");
         }
 
     connections allowunconnected:
@@ -165,61 +172,50 @@ module RcjnUe
             tcpApp[i].tcpOut --> tcp.appIn++;
             tcpApp[i].tcpIn <-- tcp.appOut++;
         }
-        tcp.ipOut --> tecDecision.tcpIn if numTcpApps > 0;
-        tecDecision.tcpOut --> tcp.ipIn if numTcpApps > 0;
-
         for i=0..numUdpApps-1 {
             udpApp[i].udpOut --> udp.appIn++;
             udpApp[i].udpIn <-- udp.appOut++;
         }
-        tecDecision.udpOut --> udp.ipIn if numUdpApps > 0;
-        udp.ipOut --> tecDecision.udpIn if numUdpApps > 0;
-
-        networkLayerWIFI.ifOut++ --> lo0.upperLayerIn;
-        lo0.upperLayerOut --> networkLayerWIFI.ifIn++;
+        networkLayer.ifOut++ --> lo0.upperLayerIn;
+        lo0.upperLayerOut --> networkLayer.ifIn++;
 
         for i=0..numRadios-1 {
             radioIn[i+1] --> { @display("m=s"); } --> wlan[i].radioIn;
-            wlan[i].upperLayerOut --> networkLayerWIFI.ifIn++;
-            wlan[i].upperLayerIn <-- networkLayerWIFI.ifOut++;
+            wlan[i].upperLayerOut --> networkLayer.ifIn++;
+            wlan[i].upperLayerIn <-- networkLayer.ifOut++;
         }
 
         for i=0..sizeof(ethg)-1 {
             ethg[i] <--> { @display("m=s"); } <--> eth[i].phys;
-            eth[i].upperLayerOut --> networkLayerWIFI.ifIn++;
-            eth[i].upperLayerIn <-- networkLayerWIFI.ifOut++;
+            eth[i].upperLayerOut --> networkLayer.ifIn++;
+            eth[i].upperLayerIn <-- networkLayer.ifOut++;
         }
 
         for i=0..sizeof(pppg)-1 {
             pppg[i] <--> { @display("m=s"); } <--> ppp[i].phys;
-            ppp[i].upperLayerOut --> networkLayerWIFI.ifIn++;
-            ppp[i].upperLayerIn <-- networkLayerWIFI.ifOut++;
+            ppp[i].upperLayerOut --> networkLayer.ifIn++;
+            ppp[i].upperLayerIn <-- networkLayer.ifOut++;
         }
 
         for i=0..numExtInterfaces-1 {
-            ext[i].upperLayerOut --> networkLayerWIFI.ifIn++;
-            ext[i].upperLayerIn <-- networkLayerWIFI.ifOut++;
+            ext[i].upperLayerOut --> networkLayer.ifIn++;
+            ext[i].upperLayerIn <-- networkLayer.ifOut++;
         }
 
-        networkLayerWIFI.transportOut++ --> manetrouting.from_ip if routingProtocol != "";
-        networkLayerWIFI.transportIn++ <-- manetrouting.to_ip if routingProtocol != "";
-
-		// LTE nic connections
+        networkLayer.transportOut++ --> manetrouting.from_ip if routingProtocol != "";
+        networkLayer.transportIn++ <-- manetrouting.to_ip if routingProtocol != "";
+        
         nic.radioIn <-- radioIn[0];
-        networkLayerLTE.ifOut++ --> nic.upperLayerIn;
-        networkLayerLTE.ifIn++ <-- nic.upperLayerOut;
-
-		// TecDecision <--> NetworkLayerLTE
-        tecDecision.wifiTcpOut --> networkLayerWIFI.transportIn++;
-        tecDecision.wifiUdpOut --> networkLayerWIFI.transportIn++;
-        networkLayerWIFI.transportOut++ --> tecDecision.wifiTcpIn;
-        networkLayerWIFI.transportOut++ --> tecDecision.wifiUdpIn;
-
-        // TecDecision <--> NetworkLayerWIFI
-        tecDecision.lteTcpOut --> networkLayerLTE.transportIn++;
-        tecDecision.lteUdpOut --> networkLayerLTE.transportIn++;
-        networkLayerLTE.transportOut++ --> tecDecision.lteTcpIn;
-        networkLayerLTE.transportOut++ --> tecDecision.lteUdpIn;
-
-
+        
+        if numUdpApps > 0 {
+        	udp.ipOut --> networkLayer.transportIn++;
+        	networkLayer.transportOut++ --> udp.ipIn;
+        }
+        
+        if numTcpApps > 0 {
+        	tcp.ipOut --> networkLayer.transportIn++;
+        	networkLayer.transportOut++ --> tcp.ipIn;
+        }
+        nic.upperLayerOut --> networkLayer.ifIn++;
+        networkLayer.ifOut++ --> nic.upperLayerIn;
 }
