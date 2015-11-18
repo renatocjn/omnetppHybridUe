@@ -1,0 +1,20 @@
+version 2
+run SingleCell-DL-2-20151112-10:47:54-2262
+attr configname SingleCell-DL
+attr datetime 20151112-10:47:54
+attr experiment SingleCell-DL
+attr inifile omnetpp.ini
+attr iterationvars $numUEs=5
+attr iterationvars2 "$numUEs=5, $repetition=2"
+attr measurement $numUEs=5
+attr network lte.simulations.networks.Tests
+attr numUEs 5
+attr processid 2262
+attr repetition 2
+attr replication #2
+attr resultdir results
+attr runnumber 2
+attr seedset 2
+
+scalar . 	numUEs 	5
+scalar Tests 	hackForCreateResultsFolder 	0

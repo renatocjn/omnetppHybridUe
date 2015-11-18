@@ -1,0 +1,3 @@
+package omnethybridue;
+
+@license(LGPL);
