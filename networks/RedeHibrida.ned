@@ -13,7 +13,7 @@ import lte.corenetwork.nodes.Ue;
 import lte.corenetwork.nodes.eNodeB;
 import omnethybridue.simulations.*;
 
-network Tests
+network RedeHibrida
 {
     parameters:
         int numUe = default(1);
@@ -32,9 +32,6 @@ network Tests
         binder: LteBinder {
             @display("p=50,175;is=s");
         }
-        server: StandardHost {
-            @display("p=212,118;is=n;i=device/server");
-        }
         router: Router {
             @display("p=321,136;i=device/smallrouter");
         }
@@ -45,6 +42,5 @@ network Tests
             @display("p=783,278");
         }
     connections:
-        server.pppg++ <--> Eth10G <--> router.pppg++;
         router.pppg++ <--> Eth10G <--> eNodeB.ppp;
 }

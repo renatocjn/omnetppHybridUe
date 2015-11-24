@@ -19,10 +19,10 @@
 #include <csimplemodule.h>
 #include <omnetpp.h>
 
+enum tecChoice {LTE, WIFI};
+
 class TecDecision: public cSimpleModule {
 protected:
-    enum tecChoice {LTE, WIFI};
-
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);
 

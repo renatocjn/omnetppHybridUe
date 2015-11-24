@@ -117,12 +117,12 @@ module simpleHibridUe
         }
 
         lo0: LoopbackInterface {
-            @display("p=159,302");
+            @display("p=215,361");
         }
 
         wlan[numRadios]: <default("Ieee80211Nic")> like IWirelessNic {
             parameters:
-                @display("p=220,341,row,60;q=queue");
+                @display("p=149,302,row,60;q=queue");
         }
 
         eth[sizeof(ethg)]: <default("EthernetInterface")> like IWiredNic {
@@ -137,7 +137,7 @@ module simpleHibridUe
 
         ext[numExtInterfaces]: <default("ExtInterface")> like IExternalNic {
             parameters:
-                @display("p=527,318,row,10;q=txQueue;i=block/ifcard");
+                @display("p=453,422,row,10;q=txQueue;i=block/ifcard");
         }
 
         manetrouting: <routingProtocol> like IManetRouting if routingProtocol != "" {
@@ -163,7 +163,7 @@ module simpleHibridUe
         // NOTE: instance must be named "nic"
         nic: LteNicUe {
             nodeType = nodeType;
-            @display("p=447,392");
+            @display("p=530,330");
         }
 
     connections allowunconnected:
@@ -204,17 +204,17 @@ module simpleHibridUe
 
         networkLayer.transportOut++ --> manetrouting.from_ip if routingProtocol != "";
         networkLayer.transportIn++ <-- manetrouting.to_ip if routingProtocol != "";
-        
+
         nic.radioIn <-- radioIn[0];
-        
+
         if numUdpApps > 0 {
-        	udp.ipOut --> networkLayer.transportIn++;
-        	networkLayer.transportOut++ --> udp.ipIn;
+            udp.ipOut --> networkLayer.transportIn++;
+            networkLayer.transportOut++ --> udp.ipIn;
         }
-        
+
         if numTcpApps > 0 {
-        	tcp.ipOut --> networkLayer.transportIn++;
-        	networkLayer.transportOut++ --> tcp.ipIn;
+            tcp.ipOut --> networkLayer.transportIn++;
+            networkLayer.transportOut++ --> tcp.ipIn;
         }
         nic.upperLayerOut --> networkLayer.ifIn++;
         networkLayer.ifOut++ --> nic.upperLayerIn;

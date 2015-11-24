@@ -24,7 +24,7 @@ module RcjnUe
 {
     parameters:
         @node();
-        @display("i=device/pocketpc;bgb=849,623;bgl=24");
+        @display("i=device/pocketpc;bgb=695,583;bgl=24");
 
         string batteryType = default("");
         bool hasStatus = default(false);
@@ -161,6 +161,10 @@ module RcjnUe
 
     connections allowunconnected:
 
+        for i=0..numUdpApps-1 {
+            udpApp[i].udpOut --> udp.appIn++;
+            udpApp[i].udpIn <-- udp.appOut++;
+        }
         for i=0..numTcpApps-1 {
             tcpApp[i].tcpOut --> tcp.appIn++;
             tcpApp[i].tcpIn <-- tcp.appOut++;
@@ -168,10 +172,6 @@ module RcjnUe
         tcp.ipOut --> tecDecision.tcpIn if numTcpApps > 0;
         tecDecision.tcpOut --> tcp.ipIn if numTcpApps > 0;
 
-        for i=0..numUdpApps-1 {
-            udpApp[i].udpOut --> udp.appIn++;
-            udpApp[i].udpIn <-- udp.appOut++;
-        }
         tecDecision.udpOut --> udp.ipIn if numUdpApps > 0;
         udp.ipOut --> tecDecision.udpIn if numUdpApps > 0;
 

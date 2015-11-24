@@ -2,7 +2,7 @@
 # OMNeT++/OMNEST Makefile for omnetHybridUe
 #
 # This file was generated with the command:
-#  opp_makemake -f --deep -L../../inet/out/$$\(CONFIGNAME\)/src -L../../simulte/out/$$\(CONFIGNAME\)/src -linet -lsimulte -DINET_IMPORT -KINET_PROJ=../../inet -KSIMULTE_PROJ=../../simulte
+#  opp_makemake -f --deep -L/home/renatocjn/projetos/omnetpp-4.4.1/samples/inet/out/$$\(CONFIGNAME\)/src -L/home/renatocjn/projetos/omnetpp-4.4.1/samples/simulte/out/$$\(CONFIGNAME\)/src -linet -lsimulte -DINET_IMPORT -KINET_PROJ=/home/renatocjn/projetos/omnetpp-4.4.1/samples/inet -KSIMULTE_PROJ=/home/renatocjn/projetos/omnetpp-4.4.1/samples/simulte
 #
 
 # Name of target to be created (-o option)
@@ -20,8 +20,8 @@ INCLUDE_PATH = -I.
 EXTRA_OBJS =
 
 # Additional libraries (-L, -l options)
-LIBS = -L../../inet/out/$(CONFIGNAME)/src -L../../simulte/out/$(CONFIGNAME)/src  -linet -lsimulte
-LIBS += -Wl,-rpath,`abspath ../../inet/out/$(CONFIGNAME)/src` -Wl,-rpath,`abspath ../../simulte/out/$(CONFIGNAME)/src`
+LIBS = -L$(INET_PROJ)/out/$(CONFIGNAME)/src -L$(SIMULTE_PROJ)/out/$(CONFIGNAME)/src  -linet -lsimulte
+LIBS += -Wl,-rpath,`abspath $(INET_PROJ)/out/$(CONFIGNAME)/src` -Wl,-rpath,`abspath $(SIMULTE_PROJ)/out/$(CONFIGNAME)/src`
 
 # Output directory
 PROJECT_OUTPUT_DIR = ../out
@@ -35,8 +35,8 @@ OBJS = $O/TecDecision.o
 MSGFILES =
 
 # Other makefile variables (-K)
-INET_PROJ=../../inet
-SIMULTE_PROJ=../../simulte
+INET_PROJ=/home/renatocjn/projetos/omnetpp-4.4.1/samples/inet
+SIMULTE_PROJ=/home/renatocjn/projetos/omnetpp-4.4.1/samples/simulte
 
 #------------------------------------------------------------------------------
 
