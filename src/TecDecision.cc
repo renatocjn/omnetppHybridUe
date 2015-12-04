@@ -14,51 +14,51 @@
 // 
 
 #include <TecDecision.h>
+#include "IPProtocolId_m.h"
+#include "IPv4ControlInfo.h"
+#include "IPv4Datagram.h"
+#include "IPv4InterfaceData.h"
 
 Define_Module(TecDecision);
 
-class ChoosenTecMessage: public cMessage {
-    tecChoice choice;
-public:
-    ChoosenTecMessage(cMessage *origin, tecChoice choice): cMessage(*origin){
-        this->choice = choice;
-    }
-    tecChoice getChoice() {
-        return choice;
-    }
-};
-
+//class ChoosenTecMessage: public cMessage {
+//    tecChoice choice;
+//public:
+//    ChoosenTecMessage(cMessage *origin, tecChoice choice): cMessage(*origin){
+//        this->choice = choice;
+//    }
+//    tecChoice getChoice() {
+//        return choice;
+//    }
+//};
 
 void TecDecision::initialize() {
     p = par("p").doubleValue();
 }
 
 void TecDecision::handleMessage(cMessage *msg){
-    ChoosenTecMessage *pkg = check_and_cast<ChoosenTecMessage*>(msg);
-    tecChoice pick;
-    if (pkg == NULL)
-        pick = chooseTec(msg);
-    else
-        pick = pkg->getChoice();
-
     if (msg->arrivedOn("tcpIn")) {
-        if (pick == LTE)
-            send(new ChoosenTecMessage(msg, LTE), "lteTcpOut");
-        if (pick == WIFI)
-            send(new ChoosenTecMessage(msg, WIFI), "wifiTcpOut");
+        tecChoice pick = chooseTec(msg);
+        if (pick == LTE){
+            send(msg, "lteTcpOut");
+        }
+        if (pick == WIFI) {
+            send(msg, "wifiTcpOut");
+        }
     }
     else if (msg->arrivedOn("udpIn")) {
-        pick = chooseTec(msg);
-        if (pick == LTE)
-            send(new ChoosenTecMessage(msg, LTE), "lteTcpOut");
-        if (pick == WIFI)
-            send(new ChoosenTecMessage(msg, WIFI), "wifiTcpOut");
+        tecChoice pick = chooseTec(msg);
+        if (pick == LTE){
+           send(msg, "lteUdpOut");
+        }
+        if (pick == WIFI) {
+            send(msg, "wifiUdpOut");
+        }
     }
-
     else if (msg->arrivedOn("wifiTcpIn") || msg->arrivedOn("lteTcpIn"))
-        send(msg, "tcpOut");
+        delete msg;
     else if (msg->arrivedOn("wifiUdpIn") || msg->arrivedOn("lteUdpIn"))
-        send(msg, "udpOut");
+        delete msg;
 }
 
 tecChoice TecDecision::chooseTec(cMessage *msg) {

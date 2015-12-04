@@ -38,7 +38,7 @@ network RedeHibrida
         eNodeB: eNodeB {
             @display("p=391,259;is=vl");
         }
-        ue[numUe]: simpleHibridUe {
+        ue[numUe]: RcjnUe {
             @display("p=783,278");
         }
     connections:
